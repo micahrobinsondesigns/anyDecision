@@ -1,0 +1,564 @@
+<style>
+  .center {
+    margin-top: 48px;
+	padding: 50px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 600px;
+	background-color: #fff;
+	min-height: 250px;
+	border-radius: 15px;
+  }
+  
+  p {
+    max-width: 700px;
+  }
+  
+  h1{
+	padding: 0px;
+	margin: 0px 0px 20px 0px;
+	text-align: center;
+  }
+  
+  body {
+    padding-bottom: 100px;
+	background-color: #efefef;
+  }
+  
+  div {
+    text-align: justify;
+    text-justify: inter-word;
+  }
+  
+  #submittingOptions{
+  text-align: center;
+  width: 42%;
+  display: block;
+  float: left;
+  background-color: #f9f9f9;
+  padding: 25px 15px;
+  margin: 8px;
+  min-height: 100px;
+  border-radius: 8px;
+  }
+  #options{
+  text-align: left;
+  width: 42%;
+  display: block;
+  float: right;
+  background-color: #f9f9f9;
+  padding: 15px;
+  margin: 8px;
+  margin-bottom: 20px;
+  min-height: 133.5px;
+  border-radius: 8px;
+  color: #555;
+  }
+  #options p{
+  padding-bottom:0px;
+  margin-bottom:0px;
+  }
+  #resultField{
+  width: 100%;
+  clear: both
+  }
+  optionChoices p{
+  width: 45%;
+  }
+  
+input[type="button"][disabled]:active,
+input[type="button"][disabled],
+input[type="submit"][disabled]:active,
+input[type="submit"][disabled] ,
+input[type="button"][disabled]:hover,
+input[type="submit"][disabled]:hover{
+  border: 0px;
+  border-radius: 8px;
+  color: GrayText;
+  cursor: inherit;
+  background: #ddd;
+  padding: 10px 15px;
+}
+
+input[type="button"]:active,
+input[type="button"],
+input[type="submit"]:active,
+input[type="submit"]{
+  border: 0px;
+  border-radius: 8px;
+  color: #fff;
+  cursor: inherit;
+  background: #49eb3f;
+  padding: 10px 15px;
+}
+input[type="button"]:hover,
+input[type="submit"]:hover{
+  border: 0px;
+  border-radius: 8px;
+  color: #e2f0e1;
+  cursor: inherit;
+  background: #4ab543;
+  padding: 10px 15px;
+}
+
+#start{
+width: 150px;
+}
+  #quiz{
+  display: none;
+  }
+  
+  #mainTable td {
+    border-collapse:separate;
+	border: 0px;
+	color: #fff;
+    background-color:#49eb3f;
+    border-radius:6px;
+    -moz-border-radius:6px;
+  }
+  #mainTable td:hover {
+	color: #e2f0e1;
+    background-color:#4ab543;
+  }
+  #mainTable tr:first-child td {
+     background-color:#fff;
+	 color: #555;
+  }
+  #results {
+  background:#f9f9f9; line-height:120%; margin: 0px auto; border:0px; border-collapse:collapse; border-radius:6px; -moz-border-radius:6px;
+  }
+  #results td:first-child{
+  width: 10px;
+  text-align: right;
+  }
+  #results td:nth-child(2){
+  width: 100px; border-left: 3px solid #fff;
+  }
+  #results th{
+  padding: 10px; text-align: center; color: #eee; background: #888; 
+  }
+  #results td{
+  padding: 10px; color:#000; border-bottom: 0px solid #000;
+  }
+  #results tr:nth-child(2){
+  background: #ddffdd; color:#000; line-height:200%; font-size: 1.5em;
+  }
+  
+  </style>
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# blog: http://ogp.me/ns/blog#">
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<title>Deciding where to eat!</title>
+<script type="text/javascript">
+<!--
+//*********************************************************
+// Add the names of the characters you wish to sort below.
+//
+// Names should be enclosed in quotation marks (").
+// Names should be separated by a comma (,).
+// However, do not put a comma at the end of the list.
+//
+//*********************************************************
+//
+// Code grabbed from the view-source: of 
+// http://blingbling.konjiki.jp/bbst.html
+// 
+// I do not know where the original code is from, sorry.
+// 
+// Most of the translations are from Google Translate.
+// Which is terrible, but what ya gonna do?
+// 
+//*********************************************************
+
+var namMember = new Array(
+//---------------------------------------------------------
+//"Red Robin",
+//"Taco Bell",
+//"Wendy's",
+//"Outback",
+//"Azteca"
+);
+//---------------------------------------------------------
+ 
+var lstMember = new Array();
+var parent = new Array();
+var equal = new Array();
+var rec = new Array();
+var cmp1,cmp2;
+var head1,head2;
+var nrec;
+ 
+var numQuestion;
+var totalSize;
+var finishSize;
+var finishFlag;
+ 
+//(Variable initialization)++++++++++++++++++++++++++++++++
+function initList(){
+	var n = 0;
+	var mid;
+	var i;
+ 
+	//(Sequence to be sorted)
+	lstMember[n] = new Array();
+	for (i=0; i<namMember.length; i++) {
+		lstMember[n][i] = i;
+	}
+	parent[n] = -1;
+	totalSize = 0;
+	n++;
+ 
+	for (i=0; i<lstMember.length; i++) {
+		//If the number of elements is two or more, divide by 2
+		//Add the divided array to the end of lstMember
+		if(lstMember[i].length>=2) {
+			mid = Math.ceil(lstMember[i].length/2);
+			lstMember[n] = new Array();
+			lstMember[n] = lstMember[i].slice(0,mid);
+			totalSize += lstMember[n].length;
+			parent[n] = i;
+			n++;
+			lstMember[n] = new Array();
+			lstMember[n] = lstMember[i].slice(mid,lstMember[i].length);
+			totalSize += lstMember[n].length;
+			parent[n] = i;
+			n++;
+		}
+	}
+ 
+	//Save the arrangment (Store array)
+	for (i=0; i<namMember.length; i++) {
+		rec[i] = 0;
+	}
+	nrec = 0;
+ 
+	//Save list of draw results list
+	//Key: value of link start point
+	//Value: value of link end point
+	for (i=0; i<=namMember.length; i++) {
+		equal[i] = -1;
+	}
+ 
+ 	cmp1 = lstMember.length-2;
+	cmp2 = lstMember.length-1;
+	head1 = 0;
+	head2 = 0;
+	numQuestion = 1;
+	finishSize = 0;
+	finishFlag = 0;
+}
+ 
+//(Sort the list)++++++++++++++++++++++++++++++++++++++++++
+//(flag: comparison result)
+//  -1・・Choose the left)
+//   0・・Draw)
+//   1・・Choose the Right)
+function sortList(flag){
+	var i;
+	var str;
+ 
+	//(Save to rec)
+	if (flag<0) {
+		rec[nrec] = lstMember[cmp1][head1];
+		head1++;
+		nrec++;
+		finishSize++;
+		while (equal[rec[nrec-1]]!=-1) {
+			rec[nrec] = lstMember[cmp1][head1];
+			head1++;
+			nrec++;
+			finishSize++;
+		}
+	}
+	else if (flag>0) {
+		rec[nrec] = lstMember[cmp2][head2];
+		head2++;
+		nrec++;
+		finishSize++;
+		while (equal[rec[nrec-1]]!=-1) {
+			rec[nrec] = lstMember[cmp2][head2];
+			head2++;
+			nrec++;
+			finishSize++;
+		}
+	}
+	else {
+		rec[nrec] = lstMember[cmp1][head1];
+		head1++;
+		nrec++;
+		finishSize++;
+		while (equal[rec[nrec-1]]!=-1) {
+			rec[nrec] = lstMember[cmp1][head1];
+			head1++;
+			nrec++;
+			finishSize++;
+		}
+		equal[rec[nrec-1]] = lstMember[cmp2][head2];
+		rec[nrec] = lstMember[cmp2][head2];
+		head2++;
+		nrec++;
+		finishSize++;
+		while (equal[rec[nrec-1]]!=-1) {
+			rec[nrec] = lstMember[cmp2][head2];
+			head2++;
+			nrec++;
+			finishSize++;
+		}
+	}
+ 
+	//(Processing after it has finished scanning the list of one)
+	if (head1<lstMember[cmp1].length && head2==lstMember[cmp2].length) {
+		//(Cmp2 list is scanned - copy the rest of the list cmp1)
+		while (head1<lstMember[cmp1].length){
+			rec[nrec] = lstMember[cmp1][head1];
+			head1++;
+			nrec++;
+			finishSize++;
+		}
+	}
+	else if (head1==lstMember[cmp1].length && head2<lstMember[cmp2].length) {
+		//(Cmp1 list is scanned - copy the rest of the list cmp2)
+		while (head2<lstMember[cmp2].length){
+			rec[nrec] = lstMember[cmp2][head2];
+			head2++;
+			nrec++;
+			finishSize++;
+		}
+	}
+ 
+	//If you reach the end of both lists
+	//Update the parent list
+	if (head1==lstMember[cmp1].length && head2==lstMember[cmp2].length) {
+		for (i=0; i<lstMember[cmp1].length+lstMember[cmp2].length; i++) {
+			lstMember[parent[cmp1]][i] = rec[i];
+		}
+		lstMember.pop();
+		lstMember.pop();
+		cmp1 = cmp1-2;
+		cmp2 = cmp2-2;
+		head1 = 0;
+		head2 = 0;
+ 
+		//(Initialize the rec before you make a new comparison)
+		if (head1==0 && head2==0) {
+			for (i=0; i<namMember.length; i++) {
+				rec[i] = 0;
+			}
+			nrec = 0;
+		}
+	}
+ 
+	if (cmp1<0) {
+		str = "Option No."+(numQuestion-1)+"<br>"+Math.floor(finishSize*100/totalSize)+"% sorted.";
+		document.getElementById("battleNumber").innerHTML = str;
+ 
+		showResult();
+		finishFlag = 1;
+	}
+	else {
+		showImage();
+	}
+}
+ 
+//(View Results)+++++++++++++++++++++++++++++++++++++++++++
+function showResult() {
+	var ranking = 1;
+	var sameRank = 1;
+	var str = "";
+	var i;
+	str += "<table id=\"results\" align=\"center\">";
+	str += "<tr><th>Rank<\/th><th style=\"border-left: 3px solid #fff;\">Choice<\/th><\/tr>";
+	//str += "<tr><td style=\"color:#ffffff; border-radius:6px; -moz-border-radius:6px; background:#000; text-align:center;\">Rank<\/td><td style=\"color:#ffffff; background-color:#000; text-align:center;\">Choice<\/td><\/tr>";
+ 
+	for (i=0; i<namMember.length; i++) {
+		//str += "<tr><td style=\"border:1px solid #000; text-align:right; padding-right:5px;\">"+ranking+"<\/td><td style=\"border:1px solid #000; padding-left:5px;\">"+namMember[lstMember[0][i]]+"<\/td><\/tr>";
+		  str += "<tr><td>"+ranking+"<\/td><td>"+namMember[lstMember[0][i]]+"<\/td><\/tr>";
+		if (i<namMember.length-1) {
+			if (equal[lstMember[0][i]]==lstMember[0][i+1]) {
+				sameRank++;
+			} else {
+				ranking += sameRank;
+				sameRank = 1;
+			}
+		}
+	}
+	str += "<\/table>";
+ 	document.getElementById("resultField").style.visibility = "visible";
+	document.getElementById("resultField").innerHTML = str;
+	document.getElementById("quiz").style.display = "none";
+}
+ 
+//(Display of two elements to be compared)+++++++++++++++++
+function showImage() {
+	document.getElementById("submittingOptions").style.display = "none";
+	document.getElementById("quiz").style.display = "inline";
+	document.getElementById("resultField").style.visibility = "hidden";
+	document.getElementById("options").style.display = "none";
+	var str0 = "Option No."+numQuestion+"<br>"+Math.floor(finishSize*100/totalSize)+"% sorted.";
+	var str1 = ""+toNameFace(lstMember[cmp1][head1]);
+	var str2 = ""+toNameFace(lstMember[cmp2][head2]);
+ 
+	document.getElementById("battleNumber").innerHTML = str0;
+	document.getElementById("leftField").innerHTML = str1;
+	document.getElementById("rightField").innerHTML = str2;
+ 
+	numQuestion++;
+}
+ 
+//Convert numbers to names (emoticons)+++++++++++++++++++++
+ 
+function toNameFace(n){
+	var str = namMember[n];
+ 
+	
+	// Remove the following comment out when adding emoticons
+	// Be careful not to conflict with index of namMember
+	/*
+	str += "<br>笏笏笏笏<br>";
+	switch(n) {
+		//case -1 縺ｯ繧ｵ繝ｳ繝励Ν縺ｪ縺ｮ縺ｧ蜑企勁縺吶ｋ縺薙→
+		case -1: str+="・・ﾂｴ竏・・・;break;
+		default: str+=""+n;
+	}
+	*/
+	return str;
+}
+//-->
+</script>
+<style type="text/css">
+<!--
+/**********************************************************
+ 
+ Please edit here if you want to change the style of the table.
+ 
+**********************************************************/
+iframe {display:none !important;}
+#mainTable{
+	font-size: 20px;
+	font-family: helvetica;
+	text-align: center;
+	vertical-align: middle;
+	width: 410px;
+	margin-left: auto;
+	margin-right: auto;
+	border-collapse: separate;
+	border-spacing: 10px 10px;
+}
+#leftField{
+	width: 120px;
+	height: 150px;
+	border: 2px solid #000;
+}
+#rightField{
+	width: 120px;
+	height: 150px;
+	border: 2px solid #000;
+}
+.middleField{
+	width: 120px;
+	height: 150px;
+	border: 2px solid #000;
+}
+
+//-->
+</style>
+<style type="text/css">figure {margin: 0;}</style>
+<style>figure{margin:0}.tmblr-iframe{position:absolute}.tmblr-iframe.hide{display:none}</style><meta name="robots" content="noindex"/>
+ 
+ <!--MICAH-->
+ <script>
+ var micah = new Array();
+ var z = 0;
+	function showData(){
+		var zack = document.getElementById("txtRestaurant").value;
+		if (/\S/.test(zack)){
+			namMember[z] = zack;
+			document.getElementById("question").innerHTML = "Want to add another?";
+			var ops = "<p>"+zack+"<\/p>";
+			document.getElementById("optionChoices").innerHTML += ops;
+			zack = document.getElementById("txtRestaurant").value = "";
+			document.getElementById("txtRestaurant").innerHTML = zack;
+			z++;
+		} else {
+			document.getElementById("question").innerHTML = "Please input a restaraunt...";
+			zack = document.getElementById("txtRestaurant").value = "";
+		};
+		if (z <= 1){
+			document.getElementById("start").disabled = true;
+		} else {
+			document.getElementById("start").disabled = false;
+		};
+	}
+		
+	function enterPress(){
+		document.getElementById("txtRestaurant")
+		.addEventListener("keyup", function(event) {
+			event.preventDefault();
+			if (event.keyCode == 13) {
+				document.getElementById("optionSubmit").click();
+			};
+		});
+	}
+	</script>
+ 
+</head>
+ 
+<body>
+
+<!--<form id="form1">
+Name: <inpur name="name" type="text" size="20">
+</form>
+-->
+
+<font face="helvetica">
+<div class="center">
+ 
+<h1>Split Decision</h1>
+
+<div id="submittingOptions">
+	<span id="question">Submit your options:</span>
+	<br /><br />
+	<input type="text" id="txtRestaurant" value="" autofocus="autofocus" maxlength="18" />	<br /><br />
+	<input type="button" value="Submit Option" id="optionSubmit" onclick="showData();"/>
+</div> 
+<div id="options">
+	Option List:
+	<span id="optionChoices"></span>
+</div> 
+
+<div id="quiz">
+<table id="mainTable" align="center" >
+	<tr>
+		<td id="battleNumber" colspan="3" style="padding-bottom: 10px;">
+			&nbsp;
+		</td>
+	</tr>
+	<tr>
+		<td id="leftField" onClick="if(finishFlag==0)sortList(-1);" rowspan="2">
+			&nbsp;
+		</td>
+		<!--
+		<td class="middleField" onClick="if(finishFlag==0)sortList(0);">
+			No Preference
+		</td>
+		-->
+		<td id="rightField" onClick="if(finishFlag==0)sortList(1);" rowspan="2">
+			&nbsp;
+		</td>
+	</tr>
+</table>
+</div>
+<div id="resultField" style="text-align:center;">
+<input type="button" id="start" disabled="true" value="START" onclick="showData();initList();showImage();"/>
+</div>
+</div>
+<script type="text/javascript">
+enterPress();
+</script>
+</body>
+</html>
